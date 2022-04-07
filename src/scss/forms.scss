@@ -13,8 +13,23 @@
     }
 
     .file_input_wrap {
-        display: flex;
+        margin-top: 20px;
+
+        div {
+            background: none !important;
+        }
+
     }
+
+    .btn {
+        margin-top: 6px;
+    }
+
+    .v-text-field--outlined fieldset {
+        top: -5px;
+    }
+
+
 }
 
 .custom_uploader {
@@ -45,7 +60,7 @@
     justify-content: center;
     align-items: center;
     position: absolute;
-    height: 54px;
+    height: 53px;
     width: 83px;
     z-index: 2;
     pointer-events: none;
@@ -63,13 +78,15 @@
     width: 83px;
     box-sizing: border-box;
     z-index: 1;
-    height: 54px;
+    height: 53px;
+    top: 1px;
     pointer-events: none;
 }
 
 .error--text.custom_uploader::before {
     border: solid 2px;
-    // border-top: solid 1px;
+    height: 54px;
+    top: 0;
 }
 
 .v-text-field--outlined fieldset {

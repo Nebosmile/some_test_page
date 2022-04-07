@@ -118,7 +118,6 @@ export default {
       for (let key in form) {
         formData.append(key, form[key]);
       }
-      console.log(form);
       if (this.$refs.form.validate()) {
         try {
           let req = await this.$http.post(
@@ -134,9 +133,13 @@ export default {
           if (req.data.success) {
             this.$emit("submit");
             this.$refs.form.reset();
+          } else {
+            alert(req.data.message);
           }
         } catch (error) {
-          console.log(error);
+          if (error.response && error.response.data) {
+            alert(JSON.stringify(error.response.data));
+          }
         }
       }
     },
@@ -146,8 +149,11 @@ export default {
         let req = await this.$http.get(
           "https://frontend-test-assignment-api.abz.agency/api/v1/positions"
         );
-        if (req.data.success) this.position_list = req.data.positions;
-        else alert(req.data.message);
+        if (req.data.success) {
+          this.position_list = req.data.positions;
+        } else {
+          alert(req.data.message);
+        }
       } catch (error) {
         alert(error);
       }

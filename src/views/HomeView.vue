@@ -40,39 +40,21 @@
             mind. They should also be excited to learn, as the world of
             Front-End Development keeps evolving.
           </p>
-          <button class="btn btn_yellow">Sign up</button>
+          <button
+            class="btn btn_yellow"
+            @click="$vuetify.goTo($refs.login, scroll_options)"
+          >
+            Sign up
+          </button>
         </div>
       </section>
-      <section class="team" ref="team">
-        <h1>Working with GET request</h1>
 
-        <div class="team_list" v-if="users">
-          <div v-for="user in users" :key="user.id" class="team_member_wrap">
-            <div class="team_member_info">
-              <img :src="user.photo" alt="" />
+      <teamComponent ref="team"></teamComponent>
 
-              <span class="short name" v-tooltip>{{ user.name }}</span>
-              <span class="short" v-tooltip>{{ user.position }}</span>
-              <span>
-                <a class="short" v-tooltip :href="`mailto:${user.email}`">{{
-                  user.email
-                }}</a>
-              </span>
-              <span class="short" v-tooltip>{{ user.phone }}</span>
-            </div>
-          </div>
-        </div>
-        <button
-          v-if="users.length && nav.next_url"
-          @click="get_users(nav)"
-          class="btn btn_yellow"
-        >
-          Show more
-        </button>
-      </section>
       <transition name="slide-fade">
         <postForm v-show="!login" ref="login" @submit="submit"></postForm>
       </transition>
+
       <transition name="slide-fade">
         <section v-show="login">
           <h1>User successfully registered</h1>
@@ -84,27 +66,21 @@
 </template>
 
 <script>
-// import * as easings from "vuetify/lib/services/goto/easing-patterns";
 import postForm from "@/components/postForm";
+import teamComponent from "@/components/teamComponent";
 
 export default {
   name: "Home",
 
   components: {
     postForm,
+    teamComponent,
   },
   data() {
     return {
       login: false,
-      nav: {
-        next_url: null,
-        page: 1,
-        count: 6,
-      },
 
-      users: [],
       token: "",
-
       scroll_options: {
         duration: 300,
         offset: 0,
@@ -116,46 +92,18 @@ export default {
     up_login() {
       this.login = this.login ? false : true;
     },
-    open_uploader() {
-      let uploader = document.getElementById("uploader");
-      uploader.click();
-    },
+
     isEllipsisActive(e) {
       return e.offsetWidth < e.scrollWidth;
     },
 
-    async get_users(nav) {
-      console.log(nav);
-      let link;
-      if (nav) {
-        console.log(nav);
-        link = nav.next_url;
-      }
-
-      link = link
-        ? link
-        : `https://frontend-test-assignment-api.abz.agency/api/v1/users?page=${this.nav.page}&count=${this.nav.count}`;
-
-      try {
-        let req = await this.$http.get(link);
-        this.users = this.users.concat(req.data.users);
-        this.nav.next_url = req.data.links.next_url;
-        return Promise.resolve();
-      } catch (error) {
-        alert(error);
-      }
-    },
     async submit() {
-      this.users = [];
-      await this.get_users();
+      await this.$refs.team.get_users();
       this.login = true;
       setTimeout(() => {
         this.$vuetify.goTo(this.$refs.team, this.scroll_options);
       }, 2000);
     },
-  },
-  mounted() {
-    this.get_users();
   },
 };
 </script>
@@ -249,9 +197,6 @@ section {
   }
 }
 
-.team .btn {
-  width: 120px;
-}
 .btn {
   display: flex;
   justify-content: center;
@@ -300,49 +245,7 @@ section {
     }
   }
 }
-.team_list {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
 
-  .team_member_wrap {
-    width: 31.62%; // calc(370 / 1170 * 100%); 370px is 31.62%  from 1170px
-    margin-right: 2.568%; // calc((100% - 370 / 1170 * 3 * 100%) / 2);find the margin between the blocks
-    padding: 20px;
-    background-color: #fff;
-    margin-bottom: 2.568%;
-    border-radius: 10px;
-
-    &:nth-child(3n) {
-      margin-right: 0;
-    }
-
-    .team_member_info {
-      text-align: center;
-
-      img {
-        display: block;
-        margin: 0 auto;
-        border-radius: 50%;
-      }
-
-      .name {
-        margin: 20px 0;
-        text-align: center;
-      }
-      .short {
-        display: block;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-        color: #000;
-        text-decoration: none;
-      }
-    }
-  }
-}
 form {
   width: 380px;
 }
